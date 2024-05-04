@@ -31,7 +31,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form action="{{ route('store-point') }}" method="POST">
+            <form action="{{ route('store-point') }}" method="POST" enctype="multipart/form-data">
                 @csrf <!-- untuk security laravel-->
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
@@ -43,7 +43,11 @@
                 </div>
                 <div class="mb-3">
                     <label for="geom" class="form-label">Geometry</label>
-                    <textarea class="form-control" id="geom" name="geom" rows="3" readonly></textarea>
+                    <textarea class="form-control" id="geom_point" name="geom" rows="3" readonly></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Image</label>
+                    <input type="file" class="form-control" id="image_point" name="image">
                 </div>
             </div>
             <div class="modal-footer">
@@ -66,7 +70,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="{{ route('store-polyline') }}" method="POST">
+        <form action="{{ route('store-polyline') }}" method="POST" enctype="multipart/form-data">
             <!-- csrf sebagai security -->
             @csrf
         <div class="mb-3">
@@ -80,6 +84,10 @@
 <div class="mb-3">
   <label for="geometry" class="form-label">Geometri</label>
   <textarea class="form-control" id="geom_polyline" name="geom" rows="3" readonly></textarea>
+</div>
+<div class="mb-3">
+    <label for="image" class="form-label">Image</label>
+    <input type="file" class="form-control" id="image_polyline" name="image">
 </div>
 </div>
 <div class="modal-footer">
@@ -102,7 +110,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="{{ route('store-polygon') }}" method="POST">
+        <form action="{{ route('store-polygon') }}" method="POST" enctype="multipart/form-data">
             <!-- csrf sebagai security -->
             @csrf
         <div class="mb-3">
@@ -116,6 +124,10 @@
 <div class="mb-3">
   <label for="geometry" class="form-label">Geometri</label>
   <textarea class="form-control" id="geom_polygon" name="geom" rows="3" readonly></textarea>
+</div>
+<div class="mb-3">
+    <label for="image" class="form-label">Image</label>
+    <input type="file" class="form-control" id="image_polygon" name="image">
 </div>
 </div>
 <div class="modal-footer">
@@ -242,8 +254,10 @@ map.on('draw:created', function(e) {
 /* GeoJSON Point */
 var point = L.geoJson(null, {
 				onEachFeature: function (feature, layer) {
-					var popupContent = "Nama: " + feature.properties.kab_kota + "<br>" +
-						"Deskripsi: " + feature.properties.provinsi;
+					var popupContent = "Nama: " + feature.properties.name + "<br>" +
+						"Deskripsi: " + feature.properties.description + "<br>" +
+                        "Foto: <img src='{{asset('storage/images/') }}/" + feature.properties.image + "' class='img-thumbnail' alt='...'>";
+
 					layer.on({
 						click: function (e) {
 							point.bindPopup(popupContent);
@@ -262,8 +276,9 @@ var point = L.geoJson(null, {
 /* GeoJSON Polyline */
 var polyline = L.geoJson(null, {
 				onEachFeature: function (feature, layer) {
-					var popupContent = "Nama: " + feature.properties.kab_kota + "<br>" +
-						"Deskripsi: " + feature.properties.provinsi;
+					var popupContent = "Nama: " + feature.properties.name + "<br>" +
+						"Deskripsi: " + feature.properties.description + "<br>" +
+                        "Foto: <img src='{{asset('storage/images/') }}/" + feature.properties.image + "' class='img-thumbnail' alt='...'>";
 					layer.on({
 						click: function (e) {
 							polyline.bindPopup(popupContent);
@@ -282,8 +297,9 @@ var polyline = L.geoJson(null, {
 /* GeoJSON Polygon */
 var polygon = L.geoJson(null, {
 				onEachFeature: function (feature, layer) {
-					var popupContent = "Nama: " + feature.properties.kab_kota + "<br>" +
-						"Deskripsi: " + feature.properties.provinsi;
+					var popupContent = "Nama: " + feature.properties.name + "<br>" +
+						"Deskripsi: " + feature.properties.description + "<br>" +
+                        "Foto: <img src='{{asset('storage/images/') }}/" + feature.properties.image + "' class='img-thumbnail' alt='...'>";
 					layer.on({
 						click: function (e) {
 							polygon.bindPopup(popupContent);

@@ -10,16 +10,17 @@ class Points extends Model
 {
     protected $table = 'table_points';
 
-    //kolom mana saja yang boleh diisi, diupdate, dan diedit
-    protected $fillable = [
-        'name',
-        'description',
-        'geom',
-    ];
+    // //kolom mana saja yang boleh diisi, diupdate, dan diedit
+    // protected $fillable = [
+    //     'name',
+    //     'description',
+    //     'geom',
+    // ];
+
+    protected $guarded = ['id'];
 
     public function points()
     {
-        return $this->select(DB::raw('id, name, description, ST_AsGeoJSON(geom) as geom
-        , created_at, updated_at'))->get();
+        return $this->select(DB::raw('id, name, description, image, ST_AsGeoJSON(geom) as geom, created_at, updated_at'))->get();
     }
 }

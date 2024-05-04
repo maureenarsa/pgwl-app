@@ -19,20 +19,26 @@ class PolylineController extends Controller
         foreach ($polylines as $p) {
             $feature[] = [
                 'type' => 'Feature',
-                'geometry' => json_decode($p->geom), //menerjemahkan string JSON menjadi variabel PHP
+                'geometry' => json_decode($p->geom),
                 'properties' => [
                     'name' => $p->name,
                     'description' => $p->description,
+                    'image' => $p->image,
                     'created_at' => $p->created_at,
                     'updated_at' => $p->updated_at
                 ]
-            ];
+                ];
         }
 
         return response()->json([
             'type' => 'FeatureCollection',
             'features' => $feature,
-        ]); // untuk mengembalikan json
+        ]);
+
+
+        //dd($points);
+
+        //return response()->json($points);
     }
 
     /**
@@ -48,22 +54,42 @@ class PolylineController extends Controller
      */
     public function store(Request $request)
     {
-         //validate Request
-         $request->validate([
+
+        //validate request
+        $request->validate([
             "name" => "required",
-            "geom" => "required"
+            "geom" => "required",
+            "image" => "mimes:jpg,jpeg,png,tif,gif,|max:10000"
         ],
         [
             "name.required" => "Name is required",
-            "geom.required" => "Geometry is required"
-        ]
-    );
+            "geom.required" => "Geometry is required",
+            "image.mimes" => "Image must be a file of type:jpg,jpeg,png,tif,gif",
+            "image.max" => "Image must not exceed 10MB"
+        ]);
 
-        $data = [
-            "name" => $request->name,
-            "description" => $request->description,
-            "geom" => $request->geom
+
+        //create folder image
+        If (!is_dir('storage/images')) {
+            mkdir('storage/images', 0777);
+        }
+
+        //upload image
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time() . '_point.' . $image->getClientOriginalExtension();
+            $image->move('storage/images', $filename);
+        } else {
+            $filename = null;
+        }
+
+        $data=[
+            'name' => $request->name,
+            'description' => $request->description,
+            'geom' => $request->geom,
+            'image' => $filename
         ];
+
 
         //create polyline - ! berfungsi untuk mengembalikan sebagai error jika this->polyline->create gagal
         if (!$this->polyline->create($data)) {
