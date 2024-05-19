@@ -20,6 +20,7 @@ class PolygonController extends Controller
                 'geometry' => json_decode($p->geom),
                 'properties' => [
                     'name' => $p->name,
+                    'id' => $p->id,
                     'description' => $p->description,
                     'image' => $p->image,
                     'created_at' => $p->created_at,
@@ -37,6 +38,34 @@ class PolygonController extends Controller
         //dd($points);
 
         //return response()->json($points);
+    }
+
+/**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $polygon = $this->polygon->polygon($id);  //untuk memanggil dari tabel point yang ditampilkan di function index seluruhnya
+
+        foreach ($polygon as $p) {
+            $feature[] = [
+                'type' => 'Feature',
+                'geometry' => json_decode($p->geom),
+                'properties' => [
+                    'name' => $p->name,
+                    'id' => $p->id,
+                    'description' => $p->description,
+                    'image' => $p->image,
+                    'created_at' => $p->created_at,
+                    'updated_at' => $p->updated_at
+                ]
+                ];
+        }
+
+        return response()->json([
+            'type' => 'FeatureCollection',
+            'features' => $feature,
+        ]);
     }
 
     /**
@@ -119,6 +148,26 @@ class PolygonController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        //get image
+       $image =$this->polygon->find($id)->image;
+
+
+         // Delete polygon
+         if (!$this->polygon->destroy($id)) {
+            return redirect()->back()->with('error', 'Failed to delete polygon');
+        }
+
+        // Redirect to Map
+        return redirect()->back()->with('success', 'Polygon deleted successfully');
+    }
+    public function table()
+    {
+        $polygons = $this->polygon->all();
+
+        $data = [
+            'title' => 'Table Polygon',
+            'polygons' => $polygons
+        ];
+        return view('table-polygon', $data);
     }
 }

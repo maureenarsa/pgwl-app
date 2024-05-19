@@ -22,6 +22,7 @@ class PolylineController extends Controller
                 'geometry' => json_decode($p->geom),
                 'properties' => [
                     'name' => $p->name,
+                    'id' => $p->id,
                     'description' => $p->description,
                     'image' => $p->image,
                     'created_at' => $p->created_at,
@@ -99,6 +100,40 @@ class PolylineController extends Controller
         //redirect to map
         return redirect()->back()->with("success", "polyline created successfully");
     }
+
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $polyline = $this->polyline->polyline($id);  //untuk memanggil dari tabel point yang ditampilkan di function index seluruhnya
+
+        foreach ($polyline as $p) {
+            $feature[] = [
+                'type' => 'Feature',
+                'geometry' => json_decode($p->geom),
+                'properties' => [
+                    'name' => $p->name,
+                    'id' => $p->id,
+                    'description' => $p->description,
+                    'image' => $p->image,
+                    'created_at' => $p->created_at,
+                    'updated_at' => $p->updated_at
+                ]
+                ];
+        }
+
+        return response()->json([
+            'type' => 'FeatureCollection',
+            'features' => $feature,
+        ]);
+    }
+
+
+
+
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -120,6 +155,26 @@ class PolylineController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        //get image
+       $image =$this->polyline->find($id)->image;
+
+
+         // Delete Polyline
+         if (!$this->polyline->destroy($id)) {
+            return redirect()->back()->with('error', 'Failed to delete polyline');
+        }
+
+        // Redirect to Map
+        return redirect()->back()->with('success', 'Polyline deleted successfully');
+    }
+    public function table()
+    {
+        $polylines = $this->polyline->all();
+
+        $data = [
+            'title' => 'Table Polyline',
+            'polylines' => $polylines
+        ];
+        return view('table-polyline', $data);
     }
 }

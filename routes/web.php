@@ -24,12 +24,24 @@ Route::get('/info', [MapController::class, 'info'])->name('info');
 
 //Create point
 Route::post('/store-point', [PointController::class, 'store'])->name('store-point');
+//Delete point
+Route::delete('/delete-point/{id}', [PointController::class, 'destroy'])->name('delete-point');
+//Edit point
+Route::get('/edit-point/{id}', [PointController::class, 'edit'])->name('edit-point');
 
 //Create polyline
 Route::post('/store-polyline', [PolylineController::class, 'store'])->name('store-polyline');
+//Delete polyline
+Route::delete('/delete-polyline/{id}', [PolylineController::class, 'destroy'])->name('delete-polyline');
+//Edit polyline
+Route::get('/edit-polyline/{id}', [PolylineController::class, 'edit'])->name('edit-polyline');
 
 //Create Polygon
 Route::post('/store-polygon', [PolygonController::class, 'store'])->name('store-polygon');
+//Delete polygon
+Route::delete('/delete-polygon/{id}', [PolygonController::class, 'destroy'])->name('delete-polygon');
+//Edit polygon
+Route::get('/edit-polygon/{id}', [PolygonController::class, 'edit'])->name('edit-polygon');
 
 
 //index pertama sebagai method yang dipanggil
@@ -49,5 +61,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+//table
+Route::get('/table-point', [PointController::class, 'table'])->name('table-point');
+Route::get('/table-polyline', [PolylineController::class, 'table'])->name('table-polyline');
+Route::get('/table-polygon', [PolygonController::class, 'table'])->name('table-polygon');
 
 require __DIR__.'/auth.php';

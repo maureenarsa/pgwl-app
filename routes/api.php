@@ -23,8 +23,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // create point
 Route::get('/points', [PointController::class, 'index'])->name('api.points'); //untuk mendapatkan data
+Route::get('/point/{id}', [PointController::class, 'show'])->name('api.point');
+
 // create polylines
 Route::get('/polylines', [PolylineController::class, 'index'])->name('api.polylines'); //untuk mendapatkan data
+Route::get('/polyline/{id}', [PolylineController::class, 'show'])->name('api.polyline');
+
 // create polylgons
 Route::get('/polygons', [PolygonController::class, 'index'])->name('api.polygons'); //untuk mendapatkan data
+Route::get('/polygon/{id}', [PolygonController::class, 'show'])->name('api.polygon');
 
