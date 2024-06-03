@@ -11,7 +11,13 @@ class MapController extends Controller
         $data = [  //dollar ciri khas variabel bahasa php
             "title" => "Peta Explore Cagar Alam Kalimantan",
         ];
-        return view('index', $data); //untuk mengambil values dari index.blade.php
+
+        //Check if user is logged in
+        if (auth()->check()) {
+            return view('index', $data);
+        } else{
+            return view('index-public', $data);
+        }
     }
     public function table()
     {

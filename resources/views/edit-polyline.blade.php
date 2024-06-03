@@ -22,33 +22,29 @@
 @section('content')
     <div id="map"></div>
 
-
-
-
     <!-- Modal Create Polyline-->
     <div class="modal fade" id="PolylineModal" tabindex="-1" aria-labelledby="PolylineModalLabel" aria-hidden="true">
-        <!-- id="exampleModal" berfungsi untuk memanggil modal supaya tertampil -->
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="PolylineModalLabel"><i class="fa-solid fa-lines-leaning"></i> Edit Polyline</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"> Edit Polyline</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('store-polyline') }}" method="POST" enctype="multipart/form-data">
-                        <!-- csrf sebagai security -->
+                    <form action="{{ route('update-polyline', $id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        @method('PATCH')
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nama Lokasi</label>
+                            <label for="name" class="form-label">Name</label>
                             <input type="text" class="form-control" id="name" name="name"
-                                placeholder="Tambahkan Nama Garis">
+                                placeholder="Fill polyline name">
                         </div>
                         <div class="mb-3">
-                            <label for="description" class="form-label">Deskripsi</label>
+                            <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="geometry" class="form-label">Geometri</label>
+                            <label for="geom" class="form-label">Geometry</label>
                             <textarea class="form-control" id="geom_polyline" name="geom" rows="3" readonly></textarea>
                         </div>
                         <div class="mb-3">
@@ -56,6 +52,9 @@
                             <input type="file" class="form-control" id="image_polyline" name="image"
                                 onchange="document.getElementById
                     ('preview-image-polyline').src = window.URL.createObjectURL(this.files[0])">
+
+                    <input type="hidden" class="from-control" id="image_old" name="image_old">
+
                         </div>
                         <div class="mb-3">
                             <img src="" alt="Preview" id="preview-image-polyline" class="img-thumbnail"
@@ -63,8 +62,9 @@
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+                            class="fa-solid fa-xmark"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save</button>
                     </form>
                 </div>
             </div>
@@ -81,8 +81,7 @@
 
 @section('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
-    <script src="https://unpkg.com/terraformer@1.0.7/terraformer.js"></script>
-    <script src="https://unpkg.com/terraformer-wkt-parser@1.1.2/terraformer-wkt-parser.js"></script>
+    <script src="https://unpkg.com/@terraformer/wkt"></script>
     <script>
         // Map
         var map = L.map('map').setView([-0.26558618585409494, 114.75766250602108], 6);
@@ -165,17 +164,19 @@
 
         map.on('draw:edited', function(e) {
             var layer = e.layers;
-            var geojson = layer.toGeoJSON();
-
-            console.log(geojson);
 
             layer.eachLayer(function(layer) {
+                var geojson = layer.toGeoJSON();
+
+                var wkt = Terraformer.geojsonToWKT(geojson.geometry);
+
                 $('#name').val(layer.feature.properties.name);
                 $('#description').val(layer.feature.properties.description);
-                $('#geom_point').val(layer.toGeoJSON().geometry.coordinates);
-                $('#preview-image-point').attr('src', '{{ asset('storage/images') }}/' + layer.
-                feature.properties.image);
-                $('#PointModal').modal('show');
+                $('#geom_polyline').val(wkt);
+                $('#image_old').val(layer.feature.properties.image);
+                $('#preview-image-polyline').attr('src', '{{ asset('storage/images') }}/' + layer.feature
+                    .properties.image);
+                $('#PolylineModal').modal('show');
             });
         });
 
@@ -186,26 +187,13 @@
 
                 drawnItems.addLayer(layer);
 
-                var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                    "Deskripsi: " + feature.properties.description + "<br>" +
-                    "Foto: <img src='{{ asset('storage/images/') }}/" + feature.properties.image +
-                    "'class='img-thumbnail' alt='...'>" + "<br>" +
+                var popupContent = "<h4>" + feature.properties.name + "</h4>" +
+                    "" + feature.properties.description + "<br>" +
+                    "<hr><img src='{{ asset('storage/images') }}/" + feature.properties.image +
+                    "' class='img-thumbnail' alt='' width='200'>";
 
-                    "<div class='d-flex flex-row mt-2'>" +
 
-                    "<a href='{{ url('edit-polyline') }}/" + feature.properties.id +
-                    "' class='btn btn-warning me-2'><i class='fa-solid fa-pen-to-square'></i></a>" +
 
-                    "<form action='{{ url('delete-polyline') }}/" + feature.properties.id + "' method='POST'>" +
-                    '{{ csrf_field() }}' +
-                    '{{ method_field('DELETE') }}' +
-
-                    "<button type='submit' class='btn btn-danger' onclick='return confirm(Yakin Anda akan menghapus data ini?)'><i class='fa-solid fa-trash-can'></i></button>"
-
-                "</form>" +
-                "</div>"
-
-                ;
                 layer.on({
                     click: function(e) {
                         polyline.bindPopup(popupContent);

@@ -45,9 +45,25 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('info') }}"><i class="fa-solid fa-circle-info"></i> Info</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
-                </li>
+
+                @if (Auth::check())
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('dashboard') }}"><i
+                            class="fa-brands fa-dashcube"></i> Dashboard</a>
+                    </li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <li class="nav-item"></li>
+                            <button class="nav-link text-danger" type="submit"><i class="fa-solid fa-right-from-bracket"></i>
+                                Logout</button>
+                            </li>
+                        </form>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link text-primary" href="{{ route('login') }}"><i class="fa-solid fa-right-to-bracket"></i>
+                                Login</a>
+                        </li>
+                    @endif
                 </ul>
             </div>
             </div>

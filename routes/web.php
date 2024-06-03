@@ -6,6 +6,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PolygonController;
 use App\Http\Controllers\PolylineController;
+use App\Http\Controllers\DashboardController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +30,8 @@ Route::post('/store-point', [PointController::class, 'store'])->name('store-poin
 Route::delete('/delete-point/{id}', [PointController::class, 'destroy'])->name('delete-point');
 //Edit point
 Route::get('/edit-point/{id}', [PointController::class, 'edit'])->name('edit-point');
+//Update point
+Route::patch('/update-point/{id}', [PointController::class, 'update'])->name('update-point');
 
 //Create polyline
 Route::post('/store-polyline', [PolylineController::class, 'store'])->name('store-polyline');
@@ -35,6 +39,8 @@ Route::post('/store-polyline', [PolylineController::class, 'store'])->name('stor
 Route::delete('/delete-polyline/{id}', [PolylineController::class, 'destroy'])->name('delete-polyline');
 //Edit polyline
 Route::get('/edit-polyline/{id}', [PolylineController::class, 'edit'])->name('edit-polyline');
+//Update polyline
+Route::patch('/update-polyline{id}', [PolylineController::class, 'update'])->name('update-polyline');
 
 //Create Polygon
 Route::post('/store-polygon', [PolygonController::class, 'store'])->name('store-polygon');
@@ -42,6 +48,8 @@ Route::post('/store-polygon', [PolygonController::class, 'store'])->name('store-
 Route::delete('/delete-polygon/{id}', [PolygonController::class, 'destroy'])->name('delete-polygon');
 //Edit polygon
 Route::get('/edit-polygon/{id}', [PolygonController::class, 'edit'])->name('edit-polygon');
+//Update polygon
+Route::patch('/update-polygon{id}', [PolygonController::class, 'update'])->name('update-polygon');
 
 
 //index pertama sebagai method yang dipanggil
@@ -52,9 +60,7 @@ Route::get('about', function () {
     return view('about');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -2,33 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Polylines;
 use Illuminate\Http\Request;
+use App\Models\Polylines;
 
 class PolylineController extends Controller
 {
-    public function __construct(){
+    public function __construct()
+    {
         $this->polyline = new Polylines();
     }
-
-
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $polylines = $this->polyline->polylines();  //untuk memanggil dari tabel point yang ditampilkan di function index seluruhnya
+        $polylines = $this->polyline->polylines();
 
         foreach ($polylines as $p) {
             $feature[] = [
                 'type' => 'Feature',
                 'geometry' => json_decode($p->geom),
                 'properties' => [
-                    'name' => $p->name,
                     'id' => $p->id,
+                    'name' => $p->name,
                     'description' => $p->description,
                     'image' => $p->image,
                     'created_at' => $p->created_at,
                     'updated_at' => $p->updated_at
                 ]
-                ];
+            ];
         }
 
         return response()->json([
@@ -36,11 +38,10 @@ class PolylineController extends Controller
             'features' => $feature,
         ]);
 
-
-        //dd($points);
-
-        //return response()->json($points);
+        // dd($polylines);
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -56,90 +57,95 @@ class PolylineController extends Controller
     public function store(Request $request)
     {
 
-        //validate request
+        //Validate data
         $request->validate([
-            "name" => "required",
-            "geom" => "required",
-            "image" => "mimes:jpg,jpeg,png,tif,gif,|max:10000"
+            'name' => 'required',
+            'geom' => 'required',
+            'image' => 'mimes:png,jpg,jpeg,gif,tiff |max:10000' // 10MB
         ],
         [
-            "name.required" => "Name is required",
-            "geom.required" => "Geometry is required",
-            "image.mimes" => "Image must be a file of type:jpg,jpeg,png,tif,gif",
-            "image.max" => "Image must not exceed 10MB"
+            'name.required' => 'Name is required',
+            'geom.required' => 'Location is required',
+            'image.mimes' => 'Image must be a file of type: jpg, jpeg, png, tiff, gif',
+            'image.max' => 'Image must not exceed 10MB'
         ]);
+        $data = [
+            'name' => $request->name,
+            'description' => $request->description,
+            'geom' => $request->geom,
+            'image'=> $request->image
+        ];
 
-
-        //create folder image
-        If (!is_dir('storage/images')) {
+        // create folder images
+        if (!is_dir('storage/images')) {
             mkdir('storage/images', 0777);
         }
 
         //upload image
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $filename = time() . '_point.' . $image->getClientOriginalExtension();
-            $image->move('storage/images', $filename);
-        } else {
-            $filename = null;
-        }
-
-        $data=[
-            'name' => $request->name,
-            'description' => $request->description,
-            'geom' => $request->geom,
-            'image' => $filename
-        ];
-
-
-        //create polyline - ! berfungsi untuk mengembalikan sebagai error jika this->polyline->create gagal
-        if (!$this->polyline->create($data)) {
-            return redirect()->back()->with("error", "Failed to create polyline");
-        };
-
-        //redirect to map
-        return redirect()->back()->with("success", "polyline created successfully");
+    if ($request->hasFile('image')){
+        $image = $request->file('image');
+        $filename = time() . "_polyline." . $image->getClientOriginalExtension();
+        $image-> move ('storage/images', $filename);
+    }else{
+        $filename = null;
     }
 
+    $data = [
+        'name' => $request->name,
+        'description' => $request->description,
+        'geom' => $request->geom,
+        'image' => $filename
+    ];
+        //create polyline
+    if(!$this->polyline->create($data)){
+        return redirect()->back()->with('error', 'failed to create polyline');
+        }
+        //redirect to Map
+        return redirect()->back()->with('success', 'polyline created successfully');
+
+    }
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        $polyline = $this->polyline->polyline($id);  //untuk memanggil dari tabel point yang ditampilkan di function index seluruhnya
+        $polylines = $this->polyline->polyline($id);
 
-        foreach ($polyline as $p) {
+        foreach ($polylines as $p) {
             $feature[] = [
                 'type' => 'Feature',
                 'geometry' => json_decode($p->geom),
                 'properties' => [
-                    'name' => $p->name,
                     'id' => $p->id,
+                    'name' => $p->name,
                     'description' => $p->description,
                     'image' => $p->image,
                     'created_at' => $p->created_at,
                     'updated_at' => $p->updated_at
                 ]
-                ];
+            ];
         }
-
         return response()->json([
             'type' => 'FeatureCollection',
             'features' => $feature,
         ]);
     }
 
-
-
-
-
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
-        //
+        $polyline = $this->polyline->find($id);
+
+        $data = [
+            'title' => 'Edit Polyline',
+            'polyline' => $polyline,
+            'id' => $id,
+        ];
+
+        return view('edit-polyline', $data);
     }
 
     /**
@@ -147,7 +153,57 @@ class PolylineController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        //Validate data
+        $request->validate([
+            'name' => 'required',
+            'geom' => 'required',
+            'image' => 'mimes:png,jpg,jpeg,gif,tiff |max:10000' // 10MB
+        ],
+        [
+            'name.required' => 'Name is required',
+            'geom.required' => 'Location is required',
+            'image.mimes' => 'Image must be a file of type: jpg, jpeg, png, tiff, gif',
+            'image.max' => 'Image must not exceed 10MB'
+        ]);
+        $data = [
+            'name' => $request->name,
+            'description' => $request->description,
+            'geom' => $request->geom,
+            'image'=> $request->image
+        ];
+
+        // create folder images
+        if (!is_dir('storage/images')) {
+            mkdir('storage/images', 0777);
+        }
+
+        //upload image
+    if ($request->hasFile('image')){
+        $image = $request->file('image');
+        $filename = time() . "_polyline." . $image->getClientOriginalExtension();
+        $image-> move ('storage/images', $filename);
+
+        //delete old image
+        $old_image = $this->polyline->find($id)->image;
+        if($old_image != null){
+            unlink('storage/images/' . $old_image);
+        }
+    }else{
+        $filename = $request->image_old;
+    }
+
+    $data = [
+        'name' => $request->name,
+        'description' => $request->description,
+        'geom' => $request->geom,
+        'image' => $filename
+    ];
+        //update polyline
+    if(!$this->polyline->find($id)->update($data)){
+        return redirect()->back()->with('error', 'Failed to update polyline');
+        }
+        //redirect to Map
+        return redirect()->back()->with('success', 'Polyline updated successfully');
     }
 
     /**
@@ -155,26 +211,33 @@ class PolylineController extends Controller
      */
     public function destroy(string $id)
     {
-        //get image
-       $image =$this->polyline->find($id)->image;
+        // get image
+        $image = $this->polyline->find($id)->image;
 
-
-         // Delete Polyline
-         if (!$this->polyline->destroy($id)) {
+        // Delete Polyline
+        if (!$this->polyline->destroy($id)) {
             return redirect()->back()->with('error', 'Failed to delete polyline');
+        }
+
+        // delete image
+        if ($image != null) {
+            unlink('storage/images/' . $image);
         }
 
         // Redirect to Map
         return redirect()->back()->with('success', 'Polyline deleted successfully');
     }
+
     public function table()
     {
         $polylines = $this->polyline->all();
 
         $data = [
-            'title' => 'Table Polyline',
+            'title' => 'Table Polylines',
             'polylines' => $polylines
         ];
+
         return view('table-polyline', $data);
     }
+
 }
