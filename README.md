@@ -12,9 +12,9 @@
 <p>                            5. Indonesia Geoportal</p>
 <br>
 <p>Tangkapan Layar </p>
-<p>![Beranda](https://github.com/maureenarsa/pgwl-app/blob/main/img/beranda1.png?raw=true)</p>
-<p>![Beranda](https://github.com/maureenarsa/pgwl-app/blob/main/img/beranda2.png?raw=true)</p>
-<p>![Peta](https://github.com/maureenarsa/pgwl-app/blob/main/img/peta.png?raw=true)</p>
-<p>![Konservasi](https://github.com/maureenarsa/pgwl-app/blob/main/img/konservasi.png?raw=true)</p>
-<p>![Spesies](https://github.com/maureenarsa/pgwl-app/blob/main/img/spesies.png?raw=true)</p>
-<p>![Data](https://github.com/maureenarsa/pgwl-app/blob/main/img/data.png?raw=true)</p>
+<p>![beranda1](https://github.com/maureenarsa/pgwl-app/assets/129671698/61cf6ca6-7c96-4654-a026-ac4bcac71c55)</p>
+<p>![beranda2](https://github.com/maureenarsa/pgwl-app/assets/129671698/fef0491b-77b1-4aeb-83e3-28f91328a0a2)</p>
+<p>![peta](https://github.com/maureenarsa/pgwl-app/assets/129671698/049d5a46-df0f-4ad3-b39d-3b4002695d69)</p>
+<p>![konservasi](https://github.com/maureenarsa/pgwl-app/assets/129671698/03741ed6-20ea-48f4-b51a-2e6f87d84ef9)</p>
+<p>![spesies](https://github.com/maureenarsa/pgwl-app/assets/129671698/85964e52-90c0-49c2-ae44-b32de36e9713)</p>
+<p>![data](https://github.com/maureenarsa/pgwl-app/assets/129671698/2ca32efa-0f36-4a11-a26f-0bdae5218522)</p>
