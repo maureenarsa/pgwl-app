@@ -20,6 +20,7 @@ use App\Http\Controllers\DashboardController;
 |
 */
 
+Route::get('/beranda', [MapController::class, 'beranda'])->name('beranda');
 Route::get('/', [MapController::class, 'index'])->name('index');
 Route::get('/table', [MapController::class, 'table'])->name('table');
 Route::get('/info', [MapController::class, 'info'])->name('info');

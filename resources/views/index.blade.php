@@ -27,7 +27,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create Point</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Location</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -74,8 +74,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="PolylineModalLabel"><i class="fa-solid fa-lines-leaning"></i> Buat
-                        Garis</h1>
+                    <h1 class="modal-title fs-5" id="PolylineModalLabel"><i class="fa-solid fa-lines-leaning"></i> Track</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -83,16 +82,16 @@
                         <!-- csrf sebagai security -->
                         @csrf
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nama Lokasi</label>
+                            <label for="name" class="form-label">Location</label>
                             <input type="text" class="form-control" id="name" name="name"
                                 placeholder="Tambahkan Nama Garis">
                         </div>
                         <div class="mb-3">
-                            <label for="description" class="form-label">Deskripsi</label>
+                            <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="geometry" class="form-label">Geometri</label>
+                            <label for="geometry" class="form-label">Geometry</label>
                             <textarea class="form-control" id="geom_polyline" name="geom" rows="3" readonly></textarea>
                         </div>
                         <div class="mb-3">
@@ -131,16 +130,16 @@
                         <!-- csrf sebagai security -->
                         @csrf
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nama Lokasi</label>
+                            <label for="name" class="form-label">Location</label>
                             <input type="text" class="form-control" id="name" name="name"
                                 placeholder="Tambahkan Nama Titik Lokasi">
                         </div>
                         <div class="mb-3">
-                            <label for="description" class="form-label">Deskripsi</label>
+                            <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="geometry" class="form-label">Geometri</label>
+                            <label for="geometry" class="form-label">Geometry</label>
                             <textarea class="form-control" id="geom_polygon" name="geom" rows="3" readonly></textarea>
                         </div>
                         <div class="mb-3">
@@ -177,60 +176,172 @@
     <script src="https://unpkg.com/terraformer-wkt-parser@1.1.2/terraformer-wkt-parser.js"></script>
     <script>
         // Map
-        var map = L.map('map').setView([-0.26558618585409494, 114.75766250602108], 6);
+        var map = L.map('map').setView([-5.238616562347336, 111.99556480716974], 6);
 
-        // Basemap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        // Basemaps
+        var openCycleMap = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: 'Tiles &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+//Layer Control
+var baseMaps = {
+    "OpenCycleMap": openCycleMap,
+};
+
+        var layerControl = L.control.layers(null, baseMaps, {
+            collapsed: false
         }).addTo(map);
 
-        // Custom icon
-        var customIcon = L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/128/8996/8996840.png',
-            iconSize: [50, 50],
-            iconAnchor: [15, 30],
-            popupAnchor: [0, -30]
-        });
+        // Array untuk menyimpan marker
+var markers = [];
 
-        // Array to store markers
-        var markers = [];
+// Custom icon
+var customIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/128/2739/2739328.png', // Menggunakan URL 'potensi.png'
+    iconSize: [35, 40],
+    iconAnchor: [5, 5],
+    popupAnchor: [0, -4]
+});
 
-        // Add markers to the array with custom icons
-        markers.push(L.marker([-1.8867159029658327, 116.17649747008426], {
-            icon: customIcon
-        }).bindPopup('Cagar Alam TELUK ADANG').openPopup());
-        markers.push(L.marker([-1.9529201801685374, 115.88446724876997], {
-            icon: customIcon
-        }).bindPopup('Cagar Alam GUNUNG AMBANG').openPopup());
-        markers.push(L.marker([-0.11239099218155506, 116.71101750375163], {
-            icon: customIcon
-        }).bindPopup('Cagar Alam MUARA KAMAN SEDULANG').openPopup());
-        markers.push(L.marker([-0.3004906689327444, 115.71859364801911], {
-            icon: customIcon
-        }).bindPopup('Cagar Alam PADANG LUWAI').openPopup());
-        markers.push(L.marker([-3.229295899869643, 116.20289273760316], {
-            icon: customIcon
-        }).bindPopup('Cagar Alam SELAT SEBUKU LAUT KELUMPANG').openPopup());
-        markers.push(L.marker([-2.751595777202152, 115.44858539754459], {
-            icon: customIcon
-        }).bindPopup('Cagar Alam GUNUNG KENTAWAN').openPopup());
-        markers.push(L.marker([-1.7413376120786528, 116.08521099831401], {
-            icon: customIcon
-        }).bindPopup('Cagar Alam SUNGAI LULAN-BULAN').openPopup());
-        markers.push(L.marker([-2.6248245106162797, 116.29290710754951], {
-            icon: customIcon
-        }).bindPopup('Cagar Alam TELUK PAMUKAN').openPopup());
-        markers.push(L.marker([-3.6563876059357443, 116.24125908460391], {
-            icon: customIcon
-        }).bindPopup('Cagar Alam GUNUNG SEBATUNG').openPopup());
-        markers.push(L.marker([-1.9903448575590303, 113.75644692883478], {
-            icon: customIcon
-        }).bindPopup('Cagar Alam Bukit TANGKILING').openPopup());
+// Koordinat titik yang ingin ditambahkan
+var coordinates = [
+    [-7.139721937921764, 105.36290758921393],
+    [-8.564192806588654, 112.69067882372504],
+    [-8.886693550386523, 114.21330627923444],
+    [-10.17376166411333, 115.16883271986859],
+    [-8.341249962313247, 116.61658805333387],
+    [-4.842481545544558, 133.1439502660333],
+    [-2.1563536447314475, 134.00624154985235],
+    [-0.4061468159709243, 132.62134948796114],
+    [0.01193041805333866, 130.81837680361227],
+    [1.5795327462622828, 125.17428799397761],
+    [1.814599787652567, 124.0245662822189],
+    [-3.930618800256537, 124.33812674906217],
+    [-6.402691853529852, 120.7060513110097],
+    [-8.640720819546864, 118.01560843634098],
+    [-5.696154546845601, 110.85724818719376],
+    [-5.638240949553969, 105.13056026553345],
+    [-4.571660103167036, 104.36234595059534],
+    [4.640347180225509, 118.65610536568306],
+    [2.365230862544966, 109.22938907495572],
+    [0.9553933604224853, 95.74286014111891],
+    [-1.2908978191725506, 98.76915858581636],
+    [-0.9068620585135458, 100.08443444831947],
+    [-2.372812208608833, 101.08544085695016]
 
-        // Add markers to the map
-        for (var i = 0; i < markers.length; i++) {
-            markers[i].addTo(map);
-        }
+];
+
+// Iterasi melalui koordinat untuk membuat marker, menambahkan popup, dan menambahkannya ke array markers
+coordinates.forEach(function(coord) {
+    var marker = L.marker(coord, { icon: customIcon }).addTo(map);
+    marker.bindPopup("Potensi Ekowisata"); // Menambahkan popup pada marker
+    markers.push(marker);
+});
+
+
+// Array untuk menyimpan marker
+var markers = [];
+
+// Custom icon
+var customIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/128/7591/7591718.png', // Menggunakan URL 'potensi.png'
+    iconSize: [35, 40],
+    iconAnchor: [5, 5],
+    popupAnchor: [0, -4]
+});
+// Koordinat titik yang ingin ditambahkan
+var coordinates = [
+    [-7.1008940682566015, 105.0258485254635],
+    [-5.747175506362941, 104.67428604327651],
+    [-8.146244200957188, 107.99215696891635],
+    [-8.472373651351253, 112.1889341000237],
+    [-9.058703511287455, 111.41989117023965],
+    [-8.754796064368088, 114.64987147533272],
+    [-9.01530368932289, 114.45211757910253],
+    [-9.16718011191878, 116.51754718199084],
+    [-9.795678947041184, 116.2099300100772],
+    [-4.3683219073008015, 102.58688382533082],
+    [-1.2084079911118546, 99.66452053072106],
+    [1.1205325204266674, 98.2802431168324],
+    [2.877206418983343, 96.76412989236132],
+    [3.8204065701807033, 95.46774307007328],
+    [-0.8349328288036812, 104.74020364463347],
+    [-3.6450012370506903, 106.41012558977214],
+    [-6.096861269780406, 112.7382504327951],
+    [-7.275293785889064, 114.62789891037434],
+    [-3.666929209875346, 113.94674679151348],
+    [-1.362177863046413, 109.85983293608956],
+    [-4.653081474788519, 135.23825026134503],
+    [-3.9957820503750057, 121.06588769706813],
+    [-4.609279608662258, 119.33004794126981],
+    [-1.7355759283565242, 131.5907896956914],
+    [1.493969757028148, 129.15182498553884]
+
+
+];
+
+// Iterasi melalui koordinat untuk membuat marker, menambahkan popup, dan menambahkannya ke array markers
+coordinates.forEach(function(coord) {
+    var marker = L.marker(coord, { icon: customIcon }).addTo(map);
+    marker.bindPopup("Lokasi Perteluran Penyu"); // Menambahkan popup pada marker
+    markers.push(marker);
+});
+
+
+ // Custom icon
+ var customIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/128/4955/4955794.png', // Menggunakan URL 'potensi.png'
+        iconSize: [40, 40],
+        iconAnchor: [5, 5],
+        popupAnchor: [0, -4]
+    });
+
+    // Array untuk menyimpan koordinat dan konten popup
+    var locations = [
+        { coords: [4.930323608496563, 96.6522279052684], popupContent: "<strong>PULAU BANYAK ACEH</strong> <br> Pada tahun 1994, Anders de Vos dikenal dengan nama Mahmud Bengkaru seorang warga Swedia, memelopori kegiatan konservasi di kawasan ini dengan mendirikan Yayasan Pulau Banyak. Lembaga ini menghentikan kegiatannya akibat instabilitas politik, tahun 2001. Hal ini menyebabkan kembali maraknya perdagangan telur penyu di area ini, hingga 10 ribu butir/bulan." },
+        { coords: [-6.381762472588881, 106.76449283140371], popupContent: "<strong>JAKARTA</strong> <br> Pada Expo Flora Fauna 2008 di Lapangan Banteng, terdapat pedagang yang menjual bebas tukik penyu hijau." },
+        { coords: [-4.274787028017785, 122.75640619126537], popupContent: "<strong>WAKATOBI SULAWESI TENGGARA</strong> <br> ProFauna mencatat bahwa pemasok penyu terbanyak ke Bali adalah Wanci (Kabupaten Wakatobi), rata-rata 600 ekor/tahun yang ditangkap di perairan Taman Nasional Wakatobi. Menurut hasil investigasi ProFauna (2007), meski perdagangan penyu di daerah ini dilakukan dengan cara sembunyi-sembunyi, diperkirakan dalam 1 tahun ada 1.115 ekor penyu yang diperdagangkan. Walau begitu, perdagangan penyu di Sulawesi Tenggara telah menurun drastis dibanding sebelum 2006. Pada tahun 2008, Pemkab Wakatobi membangun stasiun pemantau di seluruh pulau di wilayah itu untuk melindungi penyu dari aktivitas pencurian. Setiap stasiun dilengkapi kapal untuk memantau pelaku pencurian." },
+        { coords: [-8.293442866047702, 115.22317328284143], popupContent: "<strong>BALI</strong> <br> Merupakan pusat perdagangan ilegal penyu di Indonesia. Tingginya permintaan untuk perdagangan penyu di Bali telah mendorong para penangkap penyu berlayar hingga ke Jawa, Sulawesi, Kalimantan, Flores & Irian Jaya untuk mencari penyu. Tahun 1991, Tanjung Benoa dijadikan satu-satunya pintu masuk perdagangan penyu. Berdasarkan data Kelompok Pelestari Penyu Tanjung Benoa perdagangan penyu telah semakin berkurang, dari 1.500 ekor pada tahun 2000 menjadi 569 pada tahun 2003 (Adnyana, 2004)" },
+
+    ];
+
+    // Array untuk menyimpan marker
+    var markers = [];
+
+    // Iterasi melalui setiap lokasi untuk membuat marker, menambahkan popup, dan menambahkannya ke array markers
+    locations.forEach(function(location) {
+        var marker = L.marker(location.coords, { icon: customIcon }).addTo(map);
+        marker.bindPopup(location.popupContent); // Menambahkan popup pada marker
+        markers.push(marker);
+    });
+
+
+ // Custom icon
+ var customIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/128/14163/14163392.png', // Menggunakan URL 'potensi.png'
+        iconSize: [40, 40],
+        iconAnchor: [5, 5],
+        popupAnchor: [0, -4]
+    });
+
+    // Array untuk menyimpan koordinat dan konten popup
+    var locations = [
+        { coords: [7.299647445592703, 104.42545483714714], popupContent: "Sebagian penyu di Indonesia diselundupkan ke Cina yang merupakan pasar terbesar perdagangan penyu untuk makanan maupun obat tradisional. Padahal sejak 2001, Cina sudah mengeluarkan kebijakan melarang impor semua jenis penyu dari Kamboja, Thailand, dan Indonesia." },
+
+    ];
+
+    // Array untuk menyimpan marker
+    var markers = [];
+
+    // Iterasi melalui setiap lokasi untuk membuat marker, menambahkan popup, dan menambahkannya ke array markers
+    locations.forEach(function(location) {
+        var marker = L.marker(location.coords, { icon: customIcon }).addTo(map);
+        marker.bindPopup(location.popupContent); // Menambahkan popup pada marker
+        markers.push(marker);
+    });
+
+
 
         /* Digitize Function */
         var drawnItems = new L.FeatureGroup();
@@ -297,22 +408,11 @@
         /* GeoJSON Point */
         var point = L.geoJson(null, {
             onEachFeature: function(feature, layer) {
-                var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                    "Deskripsi: " + feature.properties.description + "<br>" +
-                    "Foto: <img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                    "' class='img-thumbnail' alt=''>" + "<br>" +
-
-                    "<div class='d-flex flex-row mt-2'>" +
-
-                    "<a href='{{ url('edit-point') }}/" + feature.properties.id +
-                    "' class='btn btn-warning me-2'><i class='fa-solid fa-edit'></i></a>" +
-
-                    "<form action='{{ url('delete-point') }}/" + feature.properties.id +
-                    "' method='POST'>" +
-                    '{{ csrf_field() }}' +
-                    '{{ method_field('DELETE') }}' +
-                    "<button type='submit' class='btn btn-danger' onclick='return confirm(Yakin Menghapus Data Ini?)'><i class='fa-solid fa-trash'></i></button>" +
-                    "</form>" + "</div>";
+                var popupContent = "<strong>Nama:</strong> " + "<br>" + feature.properties.name + "<br>" +
+                    "<strong>Deskripsi:</strong> " + "<br>"
+                    + feature.properties.description + "<br>" +
+                    "<img src='{{ asset('storage/images/') }}/" + feature.properties.image +
+                    "'class='img-thumbnail' alt='' width='200'>";
 
                 layer.on({
                     click: function(e) {
@@ -332,27 +432,11 @@
         /* GeoJSON Polyline */
         var polyline = L.geoJson(null, {
             onEachFeature: function(feature, layer) {
-                var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                    "Deskripsi: " + feature.properties.description + "<br>" +
-                    "Foto: <img src='{{ asset('storage/images/') }}/" + feature.properties.image +
-                    "'class='img-thumbnail' alt='...'>" + "<br>" +
-
-                    "<div class='d-flex flex-row mt-2'>" +
-
-                    "<a href='{{ url('edit-polyline') }}/" + feature.properties.id +
-                    "' class='btn btn-warning me-2'><i class='fa-solid fa-pen-to-square'></i></a>" +
-
-                    "<form action='{{ url('delete-polyline') }}/" + feature.properties.id +
-                    "' method='POST'>" +
-                    '{{ csrf_field() }}' +
-                    '{{ method_field('DELETE') }}' +
-
-                    "<button type='submit' class='btn btn-danger' onclick='return confirm(Yakin Anda akan menghapus data ini?)'><i class='fa-solid fa-trash-can'></i></button>"
-
-                "</form>" +
-                "</div>"
-
-                ;
+                var popupContent = "<strong>Nama:</strong> " + "<br>" + feature.properties.name + "<br>" +
+                    "<strong>Deskripsi:</strong> " + "<br>"
+                    + feature.properties.description + "<br>" +
+                    "<img src='{{ asset('storage/images/') }}/" + feature.properties.image +
+                    "'class='img-thumbnail' alt='' width='200'>";
                 layer.on({
                     click: function(e) {
                         polyline.bindPopup(popupContent);
@@ -368,29 +452,29 @@
             map.addLayer(polyline);
         });
 
+
+
+
+        //Layer Control
+        var overlayMaps = {
+            "Konservasi": point,
+            // "Jalur Migrasi": polyline,
+        //    "Area Tangkapan": polygon,
+        };
+
+        var layerControl = L.control.layers(null, overlayMaps, {
+            collapsed: false
+        }).addTo(map);
+
         /* GeoJSON Polygon */
         var polygon = L.geoJson(null, {
             onEachFeature: function(feature, layer) {
-                var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                    "Deskripsi: " + feature.properties.description + "<br>" +
-                    "Foto: <img src='{{ asset('storage/images/') }}/" + feature.properties.image +
-                    "'class='img-thumbnail' alt='...'>" + "<br>" +
+                var popupContent = "<strong>Nama:</strong> " + "<br>" + feature.properties.name + "<br>" +
+                    "<strong>Deskripsi:</strong> " + "<br>"
+                    + feature.properties.description + "<br>" +
+                    "<img src='{{ asset('storage/images/') }}/" + feature.properties.image +
+                    "'class='img-thumbnail' alt='' width='200'>";
 
-                    "<div class='d-flex flex-row mt-2'>" +
-
-                    "<a href='{{ url('edit-polygon') }}/" + feature.properties.id +
-                    "' class='btn btn-warning me-2'><i class='fa-solid fa-pen-to-square'></i></a>" +
-
-                    "<form action='{{ url('delete-polygon') }}/" + feature.properties.id + "' method='POST'>" +
-                    '{{ csrf_field() }}' +
-                    '{{ method_field('DELETE') }}' +
-
-                    "<button type='submit' class='btn btn-danger' onclick='return confirm(Yakin Anda akan menghapus data ini?)'><i class='fa-solid fa-trash-can'></i></button>"
-
-                "</form>" +
-                "</div>"
-
-                ;
                 layer.on({
                     click: function(e) {
                         polygon.bindPopup(popupContent);
@@ -406,17 +490,47 @@
             map.addLayer(polygon);
         });
 
+        /* Function to generate a random color */
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
 
-        //Layer Control
-        var overlayMaps = {
-            "Point": point,
-            "Polyline": polyline,
-            "Polygon": polygon
-        };
+            /* Load GeoJSON */
+fetch('storage/geojson/batimetri.geojson')
+    .then(response => response.json())
+    .then(data => {
+        L.geoJSON(data, {
+            style: function(feature) {
+                return {
+                    opacity: 1,
+                    color: "grey",
+                    weight: 0.5,
+                    fillOpacity: 1,
+                    fillColor: getRandomColor(),
+                };
+            },
+            onEachFeature: function(feature, layer) {
+                var content = "Kedalaman: " + feature.properties.Kedalaman;
+                layer.on({
+                    click: function(e) {
+                        // Fungsi ketika objek diklik
+                        layer.bindPopup(content).openPopup();
+                    },
+                });
+            }
 
-        var layerControl = L.control.layers(null, overlayMaps, {
-            collapsed: false
         }).addTo(map);
+    })
+    .catch(error => {
+        console.error('Error loading the GeoJSON file:', error);
+    });
+
+
     </script>
 @endsection
 </body>

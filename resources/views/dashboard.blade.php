@@ -14,21 +14,21 @@
                 <div class="row">
                     <div class="col">
                         <div class="alert alert-primary" role="alert">
-                            <h4><i class="fa-solid fa-location-dot"></i> Total Points</h4>
+                            <h4><i class="fa-solid fa-location-dot"></i> Kawasan Konservasi</h4>
                             <p style="font-size: 28pt">{{ $total_points }}</p>
                         </div>
                     </div>
                     <div class="col">
                         <div class="alert alert-success" role="alert">
-                            <h4><i class="fa-solid fa-route"></i> Total Polylines</h4>
-                            <p style="font-size: 28pt">{{ $total_polylines }}</p>
+                            <h4><i class="fa-solid fa-route"></i> Jalur Migrasi</h4>
+                            <p style="font-size: 28pt">{{ $total_polygons }}</p>
                         </div>
                     </div>
                     <div class="col">
                         <div class="col">
                             <div class="alert alert-danger" role="alert">
-                                <h4><i class="fa-solid fa-draw-polygon"></i> Total Polygons</h4>
-                                <p style="font-size: 28pt">{{ $total_polygons }}</p>
+                                <h4><i class="fa-solid fa-draw-polygon"></i> Area Potensial Tangkapan Samping</h4>
+                                <p style="font-size: 28pt">{{ $total_polylines }}</p>
                             </div>
                         </div>
                     </div>

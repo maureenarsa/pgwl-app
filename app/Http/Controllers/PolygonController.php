@@ -230,7 +230,7 @@ class PolygonController extends Controller
 
     public function table()
     {
-        $polygons = $this->polygon->all();
+        $polygons = $this->polygon->polygons();
 
         $data = [
             'title' => 'Table Polygons',

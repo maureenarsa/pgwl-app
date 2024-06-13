@@ -230,7 +230,7 @@ class PolylineController extends Controller
 
     public function table()
     {
-        $polylines = $this->polyline->all();
+        $polylines = $this->polyline->polylines();
 
         $data = [
             'title' => 'Table Polylines',

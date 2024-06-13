@@ -9,7 +9,7 @@ class MapController extends Controller
     public function index() //indexnya sebagai nama function index
     {
         $data = [  //dollar ciri khas variabel bahasa php
-            "title" => "Peta Explore Cagar Alam Kalimantan",
+            "title" => "Sea Turtle | Global Environmental Conservation",
         ];
 
         //Check if user is logged in
@@ -32,5 +32,12 @@ class MapController extends Controller
             "title" => "Info",
         ];
         return view('info', $data); //untuk memanggil view info
+    }
+    public function beranda()
+    {
+        $data = [
+            "title" => "Beranda",
+        ];
+        return view('beranda', $data);
     }
 }
